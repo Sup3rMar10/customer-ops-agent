@@ -160,8 +160,28 @@ Run it as an MCP server and point any MCP client at it:
 python -m opsagent serve                         # stdio, read-only
 python -m opsagent serve --allow-writes          # also lists the two write tools (they still only propose)
 python -m opsagent serve --transport streamable-http --port 8000
-claude mcp add customer-ops -- python -m opsagent serve
 ```
+
+To register it with an MCP client that launches servers from a config file, use absolute paths (the server resolves `data/` relative to where it is started, and the package is not installed, so it needs `PYTHONPATH`):
+
+```json
+{
+  "mcpServers": {
+    "customer-ops": {
+      "command": "python",
+      "args": ["-m", "opsagent", "serve"],
+      "env": {
+        "PYTHONPATH": "/path/to/customer-ops-agent",
+        "OPSAGENT_DB": "/path/to/customer-ops-agent/data/ops.db",
+        "OPSAGENT_AUDIT": "/path/to/customer-ops-agent/data/audit.jsonl",
+        "OPSAGENT_SECRET_FILE": "/path/to/customer-ops-agent/data/approval_secret"
+      }
+    }
+  }
+}
+```
+
+I have only connected to it with the official Python SDK client (over stdio and HTTP), not with a desktop MCP client, so treat that config as a starting point.
 
 The operator side of approvals:
 
@@ -217,7 +237,7 @@ The rollout plan, discovery questions, escalation path and success metrics are i
 ## Tests
 
 ```bash
-python -m pytest
+python -m pytest        # 115 tests, about 10 seconds
 ```
 
 None of the tests needs a network or an API key. They cover the seed (deterministic, fixture amounts checked by hand), every backend route and its errors, the validator against malformed and hostile arguments, each approval rule (replay, forged, wrong arguments, expiry, lockout, rate limit, failed commit), masking, the screen, the planner, the agent loop, the MCP server in process and as a real subprocess over stdio, the Claude adapter's translation, the harness itself (including that it can fail), the ablation, and the CLI demo.
