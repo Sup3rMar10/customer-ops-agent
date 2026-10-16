@@ -1,0 +1,6 @@
+# The backend, guardrails, agent loop, planner and eval harness use only the standard library.
+-r requirements-runtime.txt        # the MCP server and client
+matplotlib>=3.8                    # the eval charts
+pytest>=8.0
+# Optional, only for the live-model adapter (off by default):
+# anthropic>=0.40

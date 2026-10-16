@@ -1,0 +1,8 @@
+.git
+__pycache__
+.pytest_cache
+.venv
+data/*.db
+data/*.jsonl
+data/approval_secret
+results

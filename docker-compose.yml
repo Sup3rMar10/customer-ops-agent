@@ -1,0 +1,17 @@
+services:
+  mcp:
+    build: .
+    image: customer-ops-agent:local
+    ports:
+      - "127.0.0.1:8000:8000"      # localhost only: the HTTP transport has no authentication of its own
+    volumes:
+      - ops-data:/data             # database, audit log and approval secret survive restarts
+    # command: ["python", "-m", "opsagent", "serve", "--transport", "streamable-http", "--host", "0.0.0.0", "--allow-writes"]
+    restart: unless-stopped
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+
+volumes:
+  ops-data:

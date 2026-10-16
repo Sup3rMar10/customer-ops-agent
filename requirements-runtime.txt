@@ -1,0 +1,2 @@
+# What the MCP server needs at run time. Charts and tests need requirements.txt.
+mcp>=2.0,<3
