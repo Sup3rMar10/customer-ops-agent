@@ -218,7 +218,7 @@ python -m opsagent ask --llm anthropic "Why was invoice INV-20006 disputed?"
 - **The mock backend is a guess.** Its shape (customers, invoices, payments, disputes, notes) is a plausible AR system, not a copy of any real one. A real integration starts with discovery of the real data model.
 - **Timing is one run on one laptop**, with SQLite on local disk and no network, so the latency numbers show protocol overhead, not what a customer's real ERP would add.
 - **Versions.** Written and tested against `mcp` 2.x. The import falls back to the 1.x class name, but 1.x was not tested.
-- **Docker.** The image was not built here (the Docker daemon was not running). `docker compose config` accepts the compose file, and the exact command the container runs was started locally and answered MCP requests over HTTP.
+- **Docker.** The image builds from the `Dockerfile`. It was run with the same hardening as `docker-compose.yml` (read-only root filesystem, `tmpfs` on `/tmp`, all capabilities dropped, `no-new-privileges`) and a fresh data volume: it seeded the database, passed its healthcheck and answered an MCP `initialize` over HTTP on `127.0.0.1`. `docker compose up` itself was not run, and the container was only run in the default read-only mode, not with `--allow-writes`.
 - **Money is US dollars in cents**, no tax or currency handling, and "today" is fixed at 2026-10-15 so the results repeat.
 
 ## What I would do differently with a real customer
